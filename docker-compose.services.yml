@@ -1,0 +1,80 @@
+services:
+  portainer:
+    image: portainer/portainer
+    # container_name: portainer
+    ports:
+      - "8002:8002"
+      - "8443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    labels:
+      - "io.docksal.virtual-host=portainer.*"
+      - "io.docksal.virtual-port=9000"
+    command: -H unix:///var/run/docker.sock --tunnel-port 8002
+    networks: 
+      - wapnet
+
+  npm:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      # These ports are in format <host-port>:<container-port>
+      - '80:80' # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '81:81' # Admin Web Port
+      # Add any other Stream port you want to expose
+      # - '21:21' # FTP
+    environment:
+      DB_MYSQL_HOST: "npmdb"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
+      # Uncomment this if IPv6 is not enabled on your host
+      # DISABLE_IPV6: 'true'
+    volumes:
+      - npm_data:/data
+      - npm_letsencrypt:/etc/letsencrypt
+    depends_on:
+      - npmdb
+    networks: 
+      - wapnet
+
+  npmdb:
+    image: 'jc21/mariadb-aria:latest'
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 'npm'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'npm'
+    volumes:
+      - npm_database:/var/lib/mysql
+    networks: 
+      - wapnet
+
+  pgadmin:
+    image: dpage/pgadmin4
+    # container_name: pgadmin4
+    ports:
+      - "5051:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: dbkiller@qbitgroup.ir
+      PGADMIN_DEFAULT_PASSWORD: F1fK,O75>RsG
+    volumes: 
+      - pgadmin_data:/var/lib/pgadmin
+    networks: 
+    - wapnet
+
+
+networks:
+  wapnet:
+    external: true
+
+volumes:
+  portainer_data:
+  npm_data:
+  npm_letsencrypt:
+  npm_database:
+  pgadmin_data:
