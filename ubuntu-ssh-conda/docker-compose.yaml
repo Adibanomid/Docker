@@ -1,0 +1,18 @@
+version: '3'
+services:
+  ubuntu-ssh:
+    build: .
+    container_name: ubuntu-ssh
+    # working_dir: /usr/src/app
+    # links:
+    #   - "db:database"
+    # networks: 
+    #   - wapnet
+    # volumes: 
+    #   - node:/usr/src/app
+    ports: 
+      - "8001:8000"
+      - "2222:22"
+    # command: npm run start
+    # depends_on:
+    #    - db

@@ -1,0 +1,1 @@
+`sudo docker compose -f docker-compose.smartparking.yaml -p service up -d`

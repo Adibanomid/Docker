@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  mongodb:
+    image: mongo
+    container_name: parking-mongodb
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+      - mongodbconfig:/data/configdb
+    environment:
+      - MONGO_INITDB_DATABASE=mongodbparking
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+    expose:
+      - 27017
+    command: --quiet
+    networks:
+      - wapnet
+
+
+volumes:
+  mongodb:
+  mongodbconfig:
+
+networks:
+  wapnet:
+    external: true
