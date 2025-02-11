@@ -1,0 +1,19 @@
+services:
+  portainer:
+    image: portainer/portainer
+    # container_name: portainer
+    ports:
+      - "8002:8002"
+      - "8443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    labels:
+      - "io.docksal.virtual-host=portainer.*"
+      - "io.docksal.virtual-port=9000"
+
+    command: -H unix:///var/run/docker.sock --tunnel-port 8002
+
+
+volumes:
+  portainer_data:
